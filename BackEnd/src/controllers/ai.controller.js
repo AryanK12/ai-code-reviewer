@@ -1,5 +1,4 @@
 const aiService = require('../services/ai.service')
-
 module.exports.getReview = async (req, res) => {
     const code = req.body.code;
 
@@ -7,7 +6,26 @@ module.exports.getReview = async (req, res) => {
         return res.status(400).send("Prompt is required");
     }
 
-    const response = await aiService(code);
+    if (code.length > 10000) {
+        return res.status(400).json({
+            error: "Code snippet too long. Please limit to 10,000 characters."
+        });
+    }
 
-    res.send(response);
+    try {
+        const response = await aiService(code);
+        res.send(response);
+    } catch (error) {
+        console.error("Gemini API error:", error.message);
+
+        if (error.message?.includes('503') || error.status === 503) {
+            return res.status(503).json({
+                error: "AI service is temporarily overloaded. Please try again shortly."
+            });
+        }
+
+        res.status(500).json({
+            error: "Something went wrong while reviewing your code."
+        });
+    }
 }
