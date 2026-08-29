@@ -6,21 +6,26 @@ const model = genAI.getGenerativeModel({
     model: "gemini-3.6-flash",
     systemInstruction: `
 You are an expert code reviewer with deep knowledge of software engineering best practices.
+Review the given code and respond ONLY with valid JSON matching this exact structure, no markdown fences, no extra text:
 
-When reviewing code, provide feedback on:
-- Bugs or logical errors
-- Readability and naming
-- Performance concerns
-- Security issues
-- Suggestions for improvement, with brief code examples where useful
-
-Be direct and specific. Skip generic praise. Format your response in markdown.
-`
+{
+  "summary": "one or two sentence overall assessment",
+  "issues": [
+    { "category": "bug" | "readability" | "performance" | "security", "description": "string", "severity": "low" | "medium" | "high" }
+  ],
+  "suggestions": [
+    { "title": "string", "explanation": "string", "code": "string or null" }
+  ]
+}
+`,
+    generationConfig: {
+        responseMimeType: "application/json"
+    }
 });
 
 async function generateContent(prompt) {
     const result = await model.generateContent(prompt);
-    return result.response.text();
+    return JSON.parse(result.response.text());
 }
 
 module.exports = generateContent;
