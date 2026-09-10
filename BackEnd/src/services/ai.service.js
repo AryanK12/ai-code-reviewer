@@ -19,12 +19,14 @@ Review the given code and respond ONLY with valid JSON matching this exact struc
 }
 `,
     generationConfig: {
-        responseMimeType: "application/json"
+        responseMimeType: "application/json",
+        temperature: 0.2,
+        maxOutputTokens: 2048
     }
 });
 
-async function generateContent(prompt) {
-    const result = await model.generateContent(prompt);
+async function generateContent(code) {
+    const result = await model.generateContent(`Review this code: \n\n${code}`);
     return JSON.parse(result.response.text());
 }
 
