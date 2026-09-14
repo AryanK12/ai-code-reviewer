@@ -1,26 +1,16 @@
 # 🤖 AI Code Reviewer
 
-An AI-powered code review tool that gives structured, purpose-aware feedback on your code — not just a wall of generic text, but categorized bugs, readability, performance, and security issues, with concrete refactoring suggestions.
+A code review tool that uses Google's Gemini API to analyse code and return structured, categorised feedback — bugs, readability, performance, and security issues along with concrete refactoring suggestions, rather than a single block of generic text.
 
-Built with React, Express, and Google Gemini — independently extended from a friend's project with structured output, purpose-aware context, and production-style hardening.
+## 🧠How It Works
 
-## Features
+1. Paste code into the editor (optionally, describe what the code is for)
+2. The backend sends it to Gemini with a schema-enforced prompt
+3. Gemini returns structured JSON — not markdown text — which the frontend renders as distinct sections: summary, issues, and suggestions
 
-- **Structured AI Review** — Gemini returns categorized JSON (bugs, readability, performance, security), not raw markdown, so the UI can render real, distinct sections instead of dumping text
-- **Purpose-Aware Context** — optionally describe what the code is for (e.g. *"LeetCode Two Sum, optimize for O(n)"*) and the review adapts — it'll even flag when the code doesn't actually solve the stated problem
-- **Live Code Editor** — syntax-highlighted editing via `react-simple-code-editor` + PrismJS
-- **Built to Handle Real Traffic** — rate limiting, input validation, and proper error handling so a bad request or a Gemini outage fails gracefully instead of leaking stack traces
-- **Tuned for Consistency** — generation parameters (temperature, output limits) tuned specifically for reliable, repeatable review feedback rather than creative variance
+The context field is what makes this more than a wrapper around an API call. Giving Gemini a stated purpose (e.g. "LeetCode Two Sum, optimize for O(n)") changes what it prioritises — it'll skip suggesting production-hardening advice on clearly algorithmic code, and will flag it directly if the submitted code doesn't actually solve the stated problem.
 
-## 🛠 Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React, Vite, PrismJS, Axios |
-| Backend | Node.js, Express |
-| AI Engine | Google Gemini API (`gemini-3.6-flash`) |
-
-## 📁 Project Structure
+## 📁 Architecture
 ai-code-reviewer/
 ├── FrontEnd/ React (Vite) app
 └── BackEnd/
@@ -32,22 +22,31 @@ ai-code-reviewer/
 └── services/ Gemini integration
 
 
-Backend follows a routes → controller → service pattern, keeping request handling, business logic, and the AI integration cleanly separated.
+The backend follows a routes → controller → service structure to keep request handling, business logic, and the AI integration separated. This mirrors the pattern used in another project of mine ([AI Resume Analyzer](#)), applied here to a different domain.
 
-## 🧪 Local Development
+## 🛠 Tech Stack
 
-```bash
-git clone https://github.com/AryanK12/ai-code-reviewer.git
-cd ai-code-reviewer
-```
+- **Frontend:** React, Vite, PrismJS (syntax highlighting), Axios
+- **Backend:** Node.js, Express
+- **AI:** Google Gemini API (`gemini-3.6-flash`)
+
+##  📝Notes
+
+A few decisions worth pointing out:
+
+- **Structured output over markdown text** — `responseMimeType: application/json` with an enforced schema, so the frontend can render real UI sections instead of parsing/rendering markdown blindly.
+- **Rate limiting and input validation** — protects against abuse and controls Gemini API cost, since each request has a real cost attached.
+- **Tuned generation parameters** — `temperature: 0.2` and a capped `maxOutputTokens`, chosen because code review benefits from consistency over creative variance.
+- **Graceful failure handling** — a Gemini outage or malformed request returns a clean error message, not a raw stack trace.
+
+## 🖥️Running Locally
 
 **Backend**
 ```bash
 cd BackEnd
 npm install
 ```
-Create `BackEnd/.env` (see `.env.example`):
-GOOGLE_GEMINI_KEY=your_gemini_api_key_here
+Create `BackEnd/.env` (see `.env.example`): GOOGLE_GEMINI_KEY=your_gemini_api_key_here
 
 ```bash
 npm run dev
@@ -62,11 +61,11 @@ npm run dev
 ```
 Runs on `http://localhost:5173`.
 
-## 📡 API
+## 📡API Reference
 
 `POST /ai/get-review`
 
-**Request**
+Request:
 ```json
 {
   "code": "function add(a, b) { return a + b; }",
@@ -74,7 +73,7 @@ Runs on `http://localhost:5173`.
 }
 ```
 
-**Response**
+Response:
 ```json
 {
   "summary": "string",
@@ -87,14 +86,14 @@ Runs on `http://localhost:5173`.
 }
 ```
 
-Rate limited to 5 requests/minute per IP.
+Limited to 5 requests per minute per IP.
 
-## 🗺️ Roadmap
+## 🗺️Known Limitations / Roadmap
 
-- [ ] Multi-language support (currently JavaScript only)
-- [ ] Review history / persistence
-- [ ] Deployment
+- Editor syntax highlighting is currently JavaScript-only
+- No review history or persistence yet
+- Not yet deployed
 
-## 🙋 Author
+## 🙋Credit
 
-Built by **Aryan Kumar**
+Built by Aryan Kumar 💻 ☕
