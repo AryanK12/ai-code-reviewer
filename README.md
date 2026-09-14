@@ -11,16 +11,18 @@ A code review tool that uses Google's Gemini API to analyse code and return stru
 The context field is what makes this more than a wrapper around an API call. Giving Gemini a stated purpose (e.g. "LeetCode Two Sum, optimize for O(n)") changes what it prioritises — it'll skip suggesting production-hardening advice on clearly algorithmic code, and will flag it directly if the submitted code doesn't actually solve the stated problem.
 
 ## 📁 Architecture
-ai-code-reviewer/
-├── FrontEnd/ React (Vite) app
-└── BackEnd/
-├── server.js Entry point
-└── src/
-├── app.js Express app setup
-├── routes/ Route definitions
-├── controllers/ Request handling
-└── services/ Gemini integration
 
+```
+ai-code-reviewer/
+├── FrontEnd/                React (Vite) app
+└── BackEnd/
+    ├── server.js             Entry point
+    └── src/
+        ├── app.js             Express app setup
+        ├── routes/             Route definitions
+        ├── controllers/        Request handling
+        └── services/           Gemini integration
+```
 
 The backend follows a routes → controller → service structure to keep request handling, business logic, and the AI integration separated. This mirrors the pattern used in another project of mine ([AI Resume Analyzer](#)), applied here to a different domain.
 
@@ -46,7 +48,12 @@ A few decisions worth pointing out:
 cd BackEnd
 npm install
 ```
-Create `BackEnd/.env` (see `.env.example`): GOOGLE_GEMINI_KEY=your_gemini_api_key_here
+
+Create `BackEnd/.env` (see `.env.example`):
+
+```
+GOOGLE_GEMINI_KEY=your_gemini_api_key_here
+```
 
 ```bash
 npm run dev
