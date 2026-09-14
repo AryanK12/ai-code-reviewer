@@ -6,6 +6,9 @@ const model = genAI.getGenerativeModel({
     model: "gemini-3.6-flash",
     systemInstruction: `
 You are an expert code reviewer with deep knowledge of software engineering best practices.
+
+If the user provides context about the code's purpose, tailor your feedback accordingly — for example, don't suggest production-hardening advice (extensive input validation, logging, error handling) for code that is clearly a coding-challenge or algorithm exercise. If no context is given, review generally.
+
 Review the given code and respond ONLY with valid JSON matching this exact structure, no markdown fences, no extra text:
 
 {
@@ -25,8 +28,12 @@ Review the given code and respond ONLY with valid JSON matching this exact struc
     }
 });
 
-async function generateContent(code) {
-    const result = await model.generateContent(`Review this code: \n\n${code}`);
+async function generateContent(code, context) {
+    const userPrompt = context
+        ? `Context: ${context}\n\nReview this code:\n\n${code}`
+        : `Review this code:\n\n${code}`;
+
+    const result = await model.generateContent(userPrompt);
     return JSON.parse(result.response.text());
 }
 

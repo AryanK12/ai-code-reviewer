@@ -13,6 +13,7 @@ function App() {
   const [review, setReview] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [context, setContext] = useState('')
 
   async function reviewCode() {
     setLoading(true)
@@ -20,7 +21,7 @@ function App() {
     setReview(null)
 
     try {
-      const response = await axios.post('http://localhost:3000/ai/get-review', { code })
+      const response = await axios.post('http://localhost:3000/ai/get-review', { code, context })
       setReview(response.data)
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.')
@@ -32,6 +33,13 @@ function App() {
   return (
     <main>
       <div className="left">
+        <input
+          type="text"
+          placeholder="Optional: describe context (e.g. 'LeetCode Two Sum, optimize for O(n)')"
+          value={context}
+          onChange={(e) => setContext(e.target.value)}
+          className="context-input"
+        />
         <div className="code-editor">
           <Editor
             value={code}

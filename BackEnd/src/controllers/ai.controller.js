@@ -1,6 +1,8 @@
 const aiService = require('../services/ai.service')
+
 module.exports.getReview = async (req, res) => {
     const code = req.body.code;
+    const context = req.body.context;
 
     if (!code) {
         return res.status(400).send("Prompt is required");
@@ -13,7 +15,7 @@ module.exports.getReview = async (req, res) => {
     }
 
     try {
-        const response = await aiService(code);
+        const response = await aiService(code, context);
         res.send(response);
     } catch (error) {
         console.error("Gemini API error:", error.message);
