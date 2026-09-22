@@ -1,14 +1,14 @@
 # 🤖 AI Code Reviewer
 
-A code review tool that uses Google's Gemini API to analyse code and return structured, categorised feedback — bugs, readability, performance, and security issues along with concrete refactoring suggestions, rather than a single block of generic text.
+A code review tool that uses Google's Gemini API to analyse code and return structured, categorised feedback —> bugs, readability, performance, and security issues along with concrete refactoring suggestions, rather than a single block of generic text.
 
 ## 🧠How It Works
 
 1. Paste code into the editor (optionally, describe what the code is for)
 2. The backend sends it to Gemini with a schema-enforced prompt
-3. Gemini returns structured JSON — not markdown text — which the frontend renders as distinct sections: summary, issues, and suggestions
+3. Gemini returns structured JSON, not markdown text which the frontend renders as distinct sections: summary, issues, and suggestions
 
-The context field is what makes this more than a wrapper around an API call. Giving Gemini a stated purpose (e.g. "LeetCode Two Sum, optimize for O(n)") changes what it prioritises — it'll skip suggesting production-hardening advice on clearly algorithmic code, and will flag it directly if the submitted code doesn't actually solve the stated problem.
+The context field is what makes this more than a wrapper around an API call. Giving Gemini a stated purpose (e.g. "LeetCode Two Sum, optimise for O(n)") changes what it prioritises — it'll skip suggesting production-hardening advice on clearly algorithmic code, and will flag it directly if the submitted code doesn't actually solve the stated problem.
 
 ## 📁 Architecture
 
@@ -24,7 +24,7 @@ ai-code-reviewer/
         └── services/           Gemini integration
 ```
 
-The backend follows a routes → controller → service structure to keep request handling, business logic, and the AI integration separated. This mirrors the pattern used in another project of mine ([AI Resume Analyzer](#)), applied here to a different domain.
+The backend follows a routes → controller → service structure to keep request handling, business logic, and the AI integration separated. This mirrors the pattern used in another project of mine ([AI Resume Analyser](#)), applied here to a different domain.
 
 ## 🛠 Tech Stack
 
@@ -95,11 +95,16 @@ Response:
 
 Limited to 5 requests per minute per IP.
 
-## 🗺️Known Limitations / Roadmap
+## Known Limitations
 
 - Editor syntax highlighting is currently JavaScript-only
-- No review history or persistence yet
-- Not yet deployed
+- No review history or persistence between sessions
+
+## Roadmap
+
+- [ ] Multi-language syntax highlighting and review support
+- [ ] Review history / persistence (likely via a database)
+- [ ] Deployment (Render or Vercel)
 
 ## 🙋Credit
 
